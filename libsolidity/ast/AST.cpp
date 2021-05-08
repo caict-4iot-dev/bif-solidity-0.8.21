@@ -25,6 +25,7 @@
 #include <libsolidity/ast/AST_accept.h>
 
 #include <libdevcore/SHA3.h>
+#include <libsolidity/codegen/CompilerContext.h>
 
 #include <boost/algorithm/string.hpp>
 
@@ -592,7 +593,7 @@ bool Literal::looksLikeAddress() const
 	if (!isHexNumber())
 		return false;
 
-	return abs(int(value().length()) - 42) <= 1;
+	return abs(int(value().length()) - (42+8)) <= 1;
 }
 
 bool Literal::passesAddressChecksum() const
@@ -606,8 +607,67 @@ std::string Literal::getChecksummedAddress() const
 	solAssert(isHexNumber(), "Expected hex number");
 	/// Pad literal to be a proper hex address.
 	string address = value().substr(2);
-	if (address.length() > 40)
+	if (address.length() > 48)
 		return string();
-	address.insert(address.begin(), 40 - address.size(), '0');
+	address.insert(address.begin(), 48 - address.size(), '0');
 	return dev::getChecksummedAddress(address);
+}
+
+bool MemberAccess::saveToAPISection(APIHandler& _handler, CompilerContext& _context) const
+{
+	CompilerContext::LocationSetter locationSetter(_context, *this);
+	Declaration const* declaration = this->annotation().referencedDeclaration;
+	auto variable = dynamic_cast<VariableDeclaration const*>(declaration);
+	auto ide = std::dynamic_pointer_cast<Identifier>(m_expression);
+
+	_handler.appendIdentifier(annotation().type, *variable, static_cast<Expression const&>(*this));
+	if (!variable->isConstant()) {
+		/// variable is not a constant.
+		if (_context.isLocalVariable(ide->annotation().referencedDeclaration)) {
+			/// local variable
+		}
+		else if (_context.isStateVariable(ide->annotation().referencedDeclaration)) {
+			/// state variable
+		}
+		else {
+			solUnimplementedAssert(false, "Unsupported identifier type\n");
+		}
+	}
+	else {
+		solUnimplementedAssert(false, "Should handler constant identifier\n");
+	}
+	_handler.setContext(&_context);
+	return true;
+};
+
+bool Literal::saveToAPISection(APIHandler& _handler, CompilerContext& _context) const
+{
+	_handler.appendLiteral(m_token, *m_value);
+	_handler.setContext(&_context);
+	return true;
+}
+bool Identifier::saveToAPISection(APIHandler& _handler, CompilerContext& _context) const
+{
+	CompilerContext::LocationSetter locationSetter(_context, *this);
+	Declaration const* declaration = this->annotation().referencedDeclaration;
+	auto variable = dynamic_cast<VariableDeclaration const*>(declaration);
+	_handler.appendIdentifier(variable->annotation().type, *variable, static_cast<Expression const&>(*this));
+
+	if (!variable->isConstant()) {
+		/// variable is not a constant.
+		if (_context.isLocalVariable(declaration)) {
+			/// local variable
+		}
+		else if (_context.isStateVariable(declaration)) {
+			/// state variable
+		}
+		else {
+			solUnimplementedAssert(false, "Unsupported identifier type\n");
+		}
+	}
+	else {
+		solUnimplementedAssert(false, "Should handler constant identifier\n");
+	}
+	_handler.setContext(&_context);
+	return true;
 }

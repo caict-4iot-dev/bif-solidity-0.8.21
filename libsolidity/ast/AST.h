@@ -36,6 +36,7 @@
 #include <json/json.h>
 
 #include <boost/noncopyable.hpp>
+#include <libsolidity/codegen/APIHandler.h>
 
 #include <string>
 #include <vector>
@@ -1320,6 +1321,8 @@ public:
 	explicit Expression(SourceLocation const& _location): ASTNode(_location) {}
 
 	ExpressionAnnotation& annotation() const override;
+	virtual bool saveToAPISection(APIHandler&, CompilerContext&) const { return false; };
+
 };
 
 class Conditional: public Expression
@@ -1542,6 +1545,7 @@ public:
 	ASTString const& memberName() const { return *m_memberName; }
 
 	virtual MemberAccessAnnotation& annotation() const override;
+	bool saveToAPISection(APIHandler&, CompilerContext&)const;
 
 private:
 	ASTPointer<Expression> m_expression;
@@ -1598,6 +1602,7 @@ public:
 	ASTString const& name() const { return *m_name; }
 
 	virtual IdentifierAnnotation& annotation() const override;
+	bool saveToAPISection(APIHandler&, CompilerContext&)const;
 
 private:
 	ASTPointer<ASTString> m_name;
@@ -1668,7 +1673,7 @@ public:
 	bool passesAddressChecksum() const;
 	/// @returns the checksummed version of an address (or empty string if not valid)
 	std::string getChecksummedAddress() const;
-
+	bool saveToAPISection(APIHandler&, CompilerContext&) const;
 private:
 	Token::Value m_token;
 	ASTPointer<ASTString> m_value;

@@ -168,7 +168,39 @@ const std::map<std::string, Instruction> dev::solidity::c_instructions =
 	{ "CREATE2", Instruction::CREATE2 },
 	{ "REVERT", Instruction::REVERT },
 	{ "INVALID", Instruction::INVALID },
-	{ "SELFDESTRUCT", Instruction::SELFDESTRUCT }
+	{ "SELFDESTRUCT", Instruction::SELFDESTRUCT },
+	{ "ADDRPREFIX", Instruction::ADDRPREFIX },//add by zhangbo
+
+	{ "STOI64CHECK", Instruction::STOI64CHECK },
+	{ "ECVERIFY", Instruction::ECVERIFY },//add by zhangbo
+	{ "TOADDRESS", Instruction::TOADDRESS },//add by zhangbo
+	{ "BCRANGEPROOFVERIFY", Instruction::BCRANGEPROOFVERIFY },//add by zhangbo
+	{ "PEDERSENTALLYVERIFY", Instruction::PEDERSENTALLYVERIFY },//add by zhangbo
+	{ "SENDER", Instruction::SENDER },//add by zhangbo
+	{ "INITIATOR", Instruction::INITIATOR },//add by zhangbo
+	{ "OPERATIONINDEX", Instruction::OPERATIONINDEX },//add by zhangbo
+	{ "NOICE", Instruction::NOICE },//add by zhangbo
+	{ "ASSET", Instruction::ASSET },//add by zhangbo
+	{ "FEELIMIT", Instruction::FEELIMIT },//add by zhangbo
+	{ "ACCOUNTPRIVILEGE", Instruction::ACCOUNTPRIVILEGE },//add by zhangbo
+	{ "TRUST", Instruction::TRUST },//add by zhangbo
+	{ "STATUS", Instruction::STATUS },//add by zhangbo
+	{ "CONTROLLEDATTR", Instruction::CONTROLLEDATTR },//add by zhangbo
+	{ "SETACCOUNTTRUSTED", Instruction::SETACCOUNTTRUSTED },//add by zhangbo
+	{ "SETACCOUNTSTATUS", Instruction::SETACCOUNTSTATUS },//add by zhangbo
+	{ "SETCONTROLLEDATTR", Instruction::SETCONTROLLEDATTR },//add by zhangbo
+	{ "ISSUEASSET", Instruction::ISSUEASSET },//add by zhangbo
+	{ "PAYASSET", Instruction::PAYASSET },//add by zhangbo
+	{ "SDEL", Instruction::SDEL },//add by zhangbo
+	{ "ISVALIDATOR", Instruction::ISVALIDATOR },//add by zhangbo
+	{ "GETVALIDATORS", Instruction::GETVALIDATORS },//add by zhangbo
+	{ "QUORUMSIZE", Instruction::QUORUMSIZE },//add by zhangbo
+	{ "CONFIGFEE", Instruction::CONFIGFEE },//add by zhangbo
+	{ "SETVALIDATORS", Instruction::SETVALIDATORS },//add by zhangbo
+	{ "ADDRESSCHECK", Instruction::ADDRESSCHECK },//add by zhangbo
+
+
+	{ "TEST1", Instruction::TEST1 }//add by zhangbo
 };
 
 static const std::map<Instruction, InstructionInfo> c_instructionInfo =
@@ -311,9 +343,59 @@ static const std::map<Instruction, InstructionInfo> c_instructionInfo =
 	{ Instruction::CREATE2,		{ "CREATE2",		0, 4, 1, true, Tier::Special } },
 	{ Instruction::REVERT,		{ "REVERT",		0, 2, 0, true, Tier::Zero } },
 	{ Instruction::INVALID,		{ "INVALID",		0, 0, 0, true, Tier::Zero } },
+	{ Instruction::ADDRPREFIX,		{ "ADDRPREFIX",		0, 1, 1, false, Tier::Zero } },//add by zhangbo
+
+
+	//ÕâÀïµÄ²ÎÊý¸öÊý¹Ì¶¨Ð´2£¬ÕæÊµµÄ²ÎÊý¸öÊý¼ûc_instructionArgsSize
+	{ Instruction::TEST1,		{ "TEST1",		0, 0, 1, false, Tier::Zero } },//add by zhangbo
+
+
+    /*****************ÐÇ»ðÁ´ÄÚÖÃº¯Êý****************/
+	{ Instruction::STOI64CHECK,		{ "STOI64CHECK",		0, 1, 1, false, Tier::Zero } },//add by zhangbo
+	{ Instruction::ECVERIFY,		{ "ECVERIFY",	0, 4, 1, false, Tier::Base } },//add by zhangbo
+	{ Instruction::TOADDRESS,		{ "TOADDRESS",	0, 1, 1, false, Tier::Base } },//add by zhangbo
+	{ Instruction::BCRANGEPROOFVERIFY,		{ "BCRANGEPROOFVERIFY",	0, 2, 1, false, Tier::Base } },//add by zhangbo
+	{ Instruction::PEDERSENTALLYVERIFY,		{ "PEDERSENTALLYVERIFY",	0, 4, 1, false, Tier::Base } },//add by zhangbo
+
+	{ Instruction::SENDER,		{ "SENDER ",	0, 0, 1, false, Tier::Base } },//add by zhangbo
+	{ Instruction::INITIATOR,		{ "INITIATOR ",	0, 0, 1, false, Tier::Base } },//add by zhangbo
+	{ Instruction::OPERATIONINDEX,		{ "OPERATIONINDEX ",	0, 0, 1, false, Tier::Base } },//add by zhangbo
+	{ Instruction::OPERATIONINDEX,		{ "OPERATIONINDEX ",	0, 0, 1, false, Tier::Base } },//add by zhangbo
+	{ Instruction::NOICE,		{ "NOICE ",	0, 0, 1, false, Tier::Base } },//add by zhangbo
+	{ Instruction::ASSET,		{ "ASSET ",	0, 0, 1, false, Tier::Base } },//add by zhangbo
+	{ Instruction::FEELIMIT,		{ "FEELIMIT ",	0, 0, 1, false, Tier::Base } },//add by zhangbo
+
+	{ Instruction::ACCOUNTPRIVILEGE,		{ "ACCOUNTPRIVILEGE ",	0, 0, 1, false, Tier::Base } },//add by zhangbo
+	{ Instruction::TRUST,		{ "TRUST ",	0, 0, 1, false, Tier::Base } },//add by zhangbo
+	{ Instruction::STATUS,		{ "STATUS ",	0, 0, 1, false, Tier::Base } },//add by zhangbo
+	{ Instruction::CONTROLLEDATTR,		{ "CONTROLLEDATTR ",	0, 0, 1, false, Tier::Base } },//add by zhangbo
+	{ Instruction::SETACCOUNTTRUSTED,		{ "SETACCOUNTTRUSTED ",	0, 0, 1, false, Tier::Base } },//add by zhangbo
+	{ Instruction::SETACCOUNTSTATUS,		{ "SETACCOUNTSTATUS ",	0, 0, 1, false, Tier::Base } },//add by zhangbo
+	{ Instruction::ISSUEASSET,		{ "ISSUEASSET ",	0, 0, 1, false, Tier::Base } },//add by zhangbo
+	{ Instruction::PAYASSET,		{ "PAYASSET ",	0, 0, 1, false, Tier::Base } },//add by zhangbo
+	{ Instruction::SDEL,		{ "SDEL ",	0, 0, 1, false, Tier::Base } },//add by zhangbo
+	{ Instruction::ISVALIDATOR,		{ "ISVALIDATOR ",	0, 0, 1, false, Tier::Base } },//add by zhangbo
+	{ Instruction::GETVALIDATORS,		{ "GETVALIDATORS ",	0, 0, 1, false, Tier::Base } },//add by zhangbo
+	{ Instruction::QUORUMSIZE,		{ "QUORUMSIZE ",	0, 0, 1, false, Tier::Base } },//add by zhangbo
+	{ Instruction::CONFIGFEE,		{ "CONFIGFEE ",	0, 0, 1, false, Tier::Base } },//add by zhangbo
+	{ Instruction::SETVALIDATORS,		{ "SETVALIDATORS ",	0, 0, 1, false, Tier::Base } },//add by zhangbo
+	{ Instruction::ADDRESSCHECK,		{ "ADDRESSCHECK ",	0, 0, 1, false, Tier::Base } },//add by zhangbo
+
+		/****************************************************/
+
 	{ Instruction::SELFDESTRUCT,	{ "SELFDESTRUCT",		0, 1, 0, true, Tier::Special } }
 };
 
+//*add by zhangbo,×Ô¶¨Òåº¯ÊýµÄÕæÊµ²ÎÊý¸öÊý*/
+
+static  const std::map<Instruction, int> c_instructionArgsSize = {
+	std::pair<Instruction, int>(Instruction::TEST1,3)
+};
+
+int dev::solidity::getInstructionArgsSize(Instruction _inst)
+{
+	return c_instructionArgsSize.at(_inst);
+}
 void dev::solidity::eachInstruction(
 	bytes const& _mem,
 	function<void(Instruction,u256 const&)> const& _onInstruction

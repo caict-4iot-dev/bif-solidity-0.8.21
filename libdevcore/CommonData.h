@@ -119,6 +119,8 @@ inline T fromBigEndian(_In const& _bytes)
 }
 inline bytes toBigEndian(u256 _val) { bytes ret(32); toBigEndian(_val, ret); return ret; }
 inline bytes toBigEndian(u160 _val) { bytes ret(20); toBigEndian(_val, ret); return ret; }
+inline bytes toBigEndian(u192 _val) { bytes ret(24); toBigEndian(_val, ret); return ret; }
+
 
 /// Convenience function for toBigEndian.
 /// @returns a byte array just big enough to represent @a _val.

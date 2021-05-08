@@ -107,13 +107,13 @@ bool SyntaxChecker::visit(PragmaDirective const& _pragma)
 		SemVerMatchExpressionParser parser(tokens, literals);
 		auto matchExpression = parser.parse();
 		SemVerVersion currentVersion{string(VersionString)};
-		if (!matchExpression.matches(currentVersion))
-			m_errorReporter.syntaxError(
-				_pragma.location(),
-				"Source file requires different compiler version (current compiler is " +
-				string(VersionString) + " - note that nightly builds are considered to be "
-				"strictly less than the released version"
-			);
+// 		if (!matchExpression.matches(currentVersion))
+// 			m_errorReporter.syntaxError(
+// 				_pragma.location(),
+// 				"Source file requires different compiler version (current compiler is " +
+// 				string(VersionString) + " - note that nightly builds are considered to be "
+// 				"strictly less than the released version"
+// 			);
 		m_versionPragmaFound = true;
 	}
 	else

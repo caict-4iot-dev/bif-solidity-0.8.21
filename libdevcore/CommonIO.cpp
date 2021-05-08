@@ -62,9 +62,113 @@ inline _T readFile(std::string const& _file)
 
 }
 
+std::string dev::BinToHexString(const std::string &value) {
+	std::string result;
+	result.resize(value.size() * 2);
+	for (size_t i = 0; i < value.size(); i++) {
+		uint8_t item = value[i];
+		uint8_t high = (item >> 4);
+		uint8_t low = (item & 0x0F);
+		result[2 * i] = (high <= 9) ? (high + '0') : (high - 10 + 'a');
+		result[2 * i + 1] = (low <= 9) ? (low + '0') : (low - 10 + 'a');
+	}
+	return result;
+}
+
+int dev::Base58Decode(const std::string &strIn, std::string &strout) {
+	const char* kBase58Dictionary = "123456789AbCDEFGHJKLMNPQRSTuVWXYZaBcdefghijkmnopqrstUvwxyz";
+	std::size_t nZeros = 0;
+	for (; nZeros < strIn.size() && strIn.at(nZeros) == kBase58Dictionary[0]; nZeros++);
+	std::size_t left_size = strIn.size() - nZeros;
+	std::size_t new_size = std::size_t(left_size * log2(58.0) / 8 + 2);
+	std::string tmp_str(new_size, 0);
+	int carry = 0;
+	for (size_t i = nZeros; i < strIn.size(); i++) {
+		carry = (int)dev::kBase58digits[(int)strIn[i]];
+		for (int j = new_size - 1; j >= 0; j--) {
+			int tmp = (unsigned char)tmp_str[j] * 58 + carry;
+			tmp_str[j] = (unsigned char)(tmp % 256);
+			carry = tmp / 256;
+		}
+	}
+	strout.clear();
+	for (size_t i = 0; i < nZeros; i++)
+		strout.push_back((unsigned char)0);
+	size_t k = 0;
+	for (; k < tmp_str.size() && tmp_str[k] == 0; k++);
+	for (; k < tmp_str.size(); k++)
+		strout.push_back(tmp_str[k]);
+	return nZeros + tmp_str.size() - k;
+}
+
+std::string dev::fromBidAddress(std::string const &_a)
+{
+	std::cout << "fromAddress fromAddress:" << _a << std::endl;
+    //_a === did:bid:[加密类型]xxxxxxx
+    std::string subAddress = _a.substr(8); //ef24GK3M5yShYgVddmv1u5r24wzoUYZbd
+    std::string signatureType = subAddress.substr(0, 1);
+    std::string encodeType = subAddress.substr(1, 1);
+    std::string decodeAddress = "";
+
+    std::cout << "fromAddress signatureType:" << signatureType << std::endl;
+    std::cout << "fromAddress encodeType:" << encodeType << std::endl;
+
+    std::string signatureTypeStr = "";
+    if(signatureType.compare("z") == 0)//SIGNTYPE_CFCASM2
+            signatureTypeStr = "7A";
+    else//SIGNTYPE_ED25519
+            signatureTypeStr = "65";
+
+    std::string encodeTypeStr = "";
+    if(encodeType.compare("s") == 0){//ENCODETYPE_BASE64
+            //待填充逻辑
+            encodeTypeStr = "73";
+    }
+    else if(encodeType.compare("t") == 0){//ENCODETYPE_BECH32
+            //待填充逻辑
+            encodeTypeStr = "74";
+    }
+    else{//ENCODETYPE_BASE58
+            Base58Decode(subAddress.substr(2), decodeAddress);
+            encodeTypeStr = "66";
+    }
+    std::cout << "fromAddress decodeAddress:" << signatureTypeStr + encodeTypeStr + BinToHexString(decodeAddress) << std::endl;
+
+    return signatureTypeStr + encodeTypeStr + BinToHexString(decodeAddress);
+}
+
+void dev::bidAddressReplace(std::string &_context)
+{
+	std::string::size_type posStart = 0;
+	std::string::size_type posEnd = 0;
+	while(true)
+	{
+		if( (posStart=_context.find("did:bid", posEnd)) != string::npos )
+		{       
+			//²éÕÒµØÖ·µÄ½áÎ²±êÖ¾";"
+			posEnd = 0;
+			posEnd = _context.find(";", posStart);
+			std::string oldbidAddress, newbidAddress;
+			oldbidAddress.assign(_context, posStart, posEnd-posStart);
+			std::cout << "oldbidAddress:" << oldbidAddress << std::endl;
+			newbidAddress = fromBidAddress(oldbidAddress);
+			std::cout << "newbidAddress:" << newbidAddress << std::endl;
+			_context.replace(posStart,oldbidAddress.length(),"0x"+newbidAddress); 
+		}
+		else
+		{
+			break;
+		}
+	}
+}
+
+
 string dev::readFileAsString(string const& _file)
 {
-	return readFile<string>(_file);
+	string context = readFile<string>(_file);
+	bidAddressReplace(context);
+
+	return context;
 }
 
 string dev::readStandardInput()

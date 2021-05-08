@@ -715,7 +715,7 @@ public:
 	{
 		if (isSuper())
 			return TypePointer{};
-		return std::make_shared<IntegerType>(160, IntegerType::Modifier::Address);
+		return std::make_shared<IntegerType>(192, IntegerType::Modifier::Address);
 	}
 	virtual TypePointer interfaceType(bool _inLibrary) const override
 	{
@@ -921,6 +921,41 @@ public:
 		ABIEncodePacked,
 		ABIEncodeWithSelector,
 		ABIEncodeWithSignature,
+		AddrPrefix,//add by zhangbo
+		Test1,//add by zhangbo
+
+	/*****************???????****************/
+
+		Stoi64Check,//add by zhangbo
+		Sha256New,//add by zhangbo
+		EcVerify,//add by zhangbo
+		ToAddress,//add by zhangbo
+		BcRangeProofVerify,//add by zhangbo
+		PedersenTallyVerify,//add by zhangbo
+		Sender,
+		Initiator,
+		OperationIndex,
+		Noice,
+		Asset,
+		FeeLimit,
+		AccountPrivilege,
+		Trust,
+		Status,
+		ControlledAttr,
+		SetAccountTrusted,
+		SetAccountStatus,
+		SetControlledAttr,
+		IssueAsset,
+		PayAsset,
+		SDel,
+		IsValidator,
+		GetValidators,
+		QuorumSize,
+		ConfigFee,
+		SetValidators,
+		AddressCheck,
+		/******************************************/
+
 		GasLeft ///< gasleft()
 	};
 

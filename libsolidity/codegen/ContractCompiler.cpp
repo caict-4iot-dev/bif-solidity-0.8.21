@@ -198,11 +198,11 @@ size_t ContractCompiler::deployLibrary(ContractDefinition const& _contract)
 		// without the need for a shift.
 		let codepos := 11
 		codecopy(codepos, subOffset, subSize)
-		// Check that the first opcode is a PUSH20
-		switch eq(0x73, byte(0, mload(codepos)))
+		// Check that the first opcode is a PUSH24
+		switch eq(0x77, byte(0, mload(codepos)))
 		case 0 { invalid() }
 		mstore(0, address())
-		mstore8(codepos, 0x73)
+		mstore8(codepos, 0x77)
 		return(codepos, subSize)
 	}
 	)", {"subSize", "subOffset"});
