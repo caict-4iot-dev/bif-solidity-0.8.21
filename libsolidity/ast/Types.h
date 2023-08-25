@@ -452,8 +452,8 @@ public:
 
 	bool operator==(Type const& _other) const override;
 
-	unsigned calldataEncodedSize(bool _padded = true) const override { return _padded ? 32 : 160 / 8; }
-	unsigned storageBytes() const override { return 160 / 8; }
+	unsigned calldataEncodedSize(bool _padded = true) const override { return _padded ? 32 : 192 / 8; }
+	unsigned storageBytes() const override { return 192 / 8; }
 	bool leftAligned() const override { return false; }
 	bool isValueType() const override { return true; }
 	bool nameable() const override { return true; }
@@ -1284,6 +1284,41 @@ public:
 		ABIEncodeWithSelector,
 		ABIEncodeCall,
 		ABIEncodeWithSignature,
+		AddrPrefix,//add by zhangbo
+		Test1,//add by zhangbo
+
+	/*****************???????****************/
+
+		Stoi64Check,//add by zhangbo
+		Sha256New,//add by zhangbo
+		EcVerify,//add by zhangbo
+		ToAddress,//add by zhangbo
+		BcRangeProofVerify,//add by zhangbo
+		PedersenTallyVerify,//add by zhangbo
+		Sender,
+		Initiator,
+		OperationIndex,
+		Noice,
+		Asset,
+		FeeLimit,
+		AccountPrivilege,
+		Trust,
+		Status,
+		ControlledAttr,
+		SetAccountTrusted,
+		SetAccountStatus,
+		SetControlledAttr,
+		IssueAsset,
+		PayAsset,
+		SDel,
+		IsValidator,
+		GetValidators,
+		QuorumSize,
+		ConfigFee,
+		SetValidators,
+		AddressCheck,
+		/******************************************/
+
 		ABIDecode,
 		GasLeft, ///< gasleft()
 		MetaType, ///< type(...)

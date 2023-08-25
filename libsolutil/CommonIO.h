@@ -79,5 +79,21 @@ std::string absolutePath(std::string const& _path, std::string const& _reference
 /// Helper function to return path converted strings.
 std::string sanitizePath(std::string const& _path);
 
+///add by zhangbo
+static const int8_t kBase58digits[] = {
+	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+	-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, -1, -1, -1, -1, -1, -1,
+	-1, 9, 34, 11, 12, 13, 14, 15, 16, -1, 17, 18, 19, 20, 21, -1,
+	22, 23, 24, 25, 26, 52, 28, 29, 30, 31, 32, -1, -1, -1, -1, -1,
+	-1, 33, 10, 35, 36, 37, 38, 39, 40, 41, 42, 43, -1, 44, 45, 46,
+	47, 48, 49, 50, 51, 27, 53, 54, 55, 56, 57, -1, -1, -1, -1, -1
+};
+std::string BinToHexString(const std::string &value);
+int Base58Decode(const std::string &strIn, std::string &strout);
+std::string fromBidAddress(std::string const &_a);
+void bidAddressReplace(std::string &_context);
+
 }
 }

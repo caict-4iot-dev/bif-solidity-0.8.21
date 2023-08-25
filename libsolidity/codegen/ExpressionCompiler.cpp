@@ -33,6 +33,7 @@
 #include <libsolidity/ast/TypeProvider.h>
 
 #include <libevmasm/GasMeter.h>
+#include <libsolidity/codegen/APIHandler.h>
 #include <libsolutil/Common.h>
 #include <libsolutil/FunctionSelector.h>
 #include <libsolutil/Keccak256.h>
@@ -42,6 +43,7 @@
 #include <boost/algorithm/string/replace.hpp>
 #include <numeric>
 #include <utility>
+#include <iostream>
 
 using namespace std;
 using namespace solidity;
@@ -865,6 +867,273 @@ bool ExpressionCompiler::visit(FunctionCall const& _functionCall)
 			acceptAndConvert(*arguments.front(), *function.parameterTypes().front(), true);
 			m_context << Instruction::SELFDESTRUCT;
 			break;
+		/**********************�ǻ������ú���*********************/
+		case FunctionType::Kind::Stoi64Check:
+		{
+			arguments.front()->accept(*this);
+			utils().convertType(*arguments.front()->annotation().type, *function.parameterTypes().front(), true);
+			m_context << Instruction::STOI64CHECK;
+			break;
+		}
+		case FunctionType::Kind::EcVerify:
+		{
+			for (int i = arguments.size() - 1; i >= 0; i--) {
+				arguments[i]->accept(*this);
+				//�������Ϊstring memory
+				if ((*function.parameterTypes()[i]).isImplicitlyConvertibleTo(*TypeProvider::fromElementaryTypeName("string memory")))
+				{
+					utils().fetchFreeMemoryPointer();
+					utils().packedEncode(
+						{ arguments[i]->annotation().type },
+						{ function.parameterTypes()[i] }
+					);
+					utils().toSizeAfterFreeMemoryPointer();
+				}
+				else
+					utils().convertType(*arguments[i]->annotation().type, *function.parameterTypes()[i], true);
+			}
+			m_context << Instruction::ECVERIFY;
+			break;
+		}
+		case FunctionType::Kind::ToAddress:
+		{
+			utils().fetchFreeMemoryPointer();
+			utils().packedEncode(
+				{ arguments.front()->annotation().type },
+				{ function.parameterTypes().front() }
+			);
+			utils().toSizeAfterFreeMemoryPointer();
+			m_context << Instruction::TOADDRESS;
+			break;
+		}
+		case FunctionType::Kind::BcRangeProofVerify:
+		{
+			for (int i = arguments.size() - 1; i >= 0; i--) {
+				arguments[i]->accept(*this);
+				//�������Ϊstring memory
+				utils().fetchFreeMemoryPointer();
+				utils().packedEncode(
+					{ arguments[i]->annotation().type },
+					{ function.parameterTypes()[i] }
+				);
+				utils().toSizeAfterFreeMemoryPointer();
+			}
+			m_context << Instruction::BCRANGEPROOFVERIFY;
+			break;
+		}
+		case FunctionType::Kind::PedersenTallyVerify:
+		{
+			for (int i = arguments.size() - 1; i >= 0; i--) {
+				arguments[i]->accept(*this);
+				//�������Ϊstring memory
+				if ((*function.parameterTypes()[i]).isImplicitlyConvertibleTo(*TypeProvider::fromElementaryTypeName("string memory")))
+				{
+					utils().fetchFreeMemoryPointer();
+					utils().packedEncode(
+						{ arguments[i]->annotation().type },
+						{ function.parameterTypes()[i] }
+					);
+					utils().toSizeAfterFreeMemoryPointer();
+				}
+				else
+					utils().convertType(*arguments[i]->annotation().type, *function.parameterTypes()[i], true);
+			}
+			m_context << Instruction::PEDERSENTALLYVERIFY;
+			break;
+		}
+
+		case FunctionType::Kind::Sender:
+		{
+			m_context << Instruction::SENDER;
+			break;
+		}
+		case FunctionType::Kind::Initiator:
+		{
+			m_context << Instruction::INITIATOR;
+			break;
+		}
+		case FunctionType::Kind::OperationIndex:
+		{
+			m_context << Instruction::OPERATIONINDEX;
+			break;
+		}
+		case FunctionType::Kind::Noice:
+		{
+			m_context << Instruction::NOICE;
+			break;
+		}
+		case FunctionType::Kind::Asset:
+		{
+			m_context << Instruction::ASSET;
+			break;
+		}
+		case FunctionType::Kind::FeeLimit:
+		{
+			m_context << Instruction::FEELIMIT;
+			break;
+		}
+		case FunctionType::Kind::AccountPrivilege:
+		{
+			m_context << Instruction::ACCOUNTPRIVILEGE;
+			break;
+		}
+		case FunctionType::Kind::Trust:
+		{
+			m_context << Instruction::TRUST;
+			break;
+		}
+		case FunctionType::Kind::Status:
+		{
+			m_context << Instruction::STATUS;
+			break;
+		}
+		case FunctionType::Kind::ControlledAttr:
+		{
+			m_context << Instruction::CONTROLLEDATTR;
+			break;
+		}
+		case FunctionType::Kind::SetAccountTrusted:
+		{
+			m_context << Instruction::SETACCOUNTTRUSTED;
+			break;
+		}
+		case FunctionType::Kind::SetAccountStatus:
+		{
+			m_context << Instruction::SETACCOUNTSTATUS;
+			break;
+		}
+		case FunctionType::Kind::SetControlledAttr:
+		{
+			m_context << Instruction::SETCONTROLLEDATTR;
+			break;
+		}
+		case FunctionType::Kind::IssueAsset:
+		{
+			m_context << Instruction::ISSUEASSET;
+			break;
+		}
+		case FunctionType::Kind::SDel:
+		{
+			m_context << Instruction::SDEL;
+			break;
+		}
+		case FunctionType::Kind::IsValidator:
+		{
+			m_context << Instruction::ISVALIDATOR;
+			break;
+		}
+		case FunctionType::Kind::GetValidators:
+		{
+			m_context << Instruction::GETVALIDATORS;
+			break;
+		}
+		case FunctionType::Kind::QuorumSize:
+		{
+			m_context << Instruction::QUORUMSIZE;
+			break;
+		}
+		case FunctionType::Kind::ConfigFee:
+		{
+			m_context << Instruction::CONFIGFEE;
+			break;
+		}
+		case FunctionType::Kind::SetValidators:
+		{
+			m_context << Instruction::SETVALIDATORS;
+			break;
+		}
+		case FunctionType::Kind::AddressCheck:
+		{
+			m_context << Instruction::ADDRESSCHECK;
+			break;
+		}
+	    /*******************************************/
+
+		case FunctionType::Kind::Test1:
+		{
+			m_context << Instruction::TEST1;
+//   			APIHandler apiHandler;
+// 			apiHandler.clearAPIObjects();
+//   			apiHandler.setContext(&m_context);
+//   			for (auto const& arg : arguments)
+//   			{
+//   				if (!arg->saveToAPISection(apiHandler, m_context)) {
+//   					/// Current ENI function supports the following types:
+//   					///		1. StringLiteral, e.g. "Hello, world!".
+//   					///		2. Signed or Unsigned Number(int or uint), e.g. 100.
+//   					///		3. Number Variable. e.g. int i = 10. eni(i).
+//   					///		4. String memory Variable. e.g. string memory s = "RX230". eni(s).
+//   					///		5. FunctionCall whose return value is listed on below.
+//   					solAssert(false, "Unsupported type for ENI function\n");
+//   				}
+//   			}
+//   			apiHandler.packedToMemory(Instruction::TEST1, Token::StringLiteral);
+//   			apiHandler.clearAPIObjects();
+  			break;
+// 
+// 			arguments[0]->accept(*this);
+//  			utils().convertType(*arguments[0]->annotation().type, *function.parameterTypes()[0], true);
+//  
+//  		
+//  
+//  		//	utils().fetchFreeMemoryPointer();
+// 
+// 			bytes typeSection;
+// 			typeSection.push_back('t');
+// 			typeSection.push_back('e');
+// 			typeSection.push_back('s');
+// 			typeSection.push_back('t');
+// 			typeSection.push_back('\0');
+// 
+// 			m_context << u256(0x20);
+// 			utils().allocateMemory();
+// 			/// stack post: typeSectionOffset <mem_start>
+// 			/// stack pre: typeSectionOffset <mem_start> length
+// 			m_context << u256(typeSection.size()) << Instruction::SWAP1 << Instruction::MSTORE;
+// 
+// 
+// 			m_context << u256(0x20);
+// 			utils().allocateMemory();
+// 			/// stack post: typeSectionOffset <mem_start> typeSection
+// 			m_context << h256::Arith(h256(typeSection, h256::AlignLeft)) << Instruction::SWAP1 << Instruction::MSTORE;
+// 
+// 
+// 
+// 			bytes returnSection;
+// 			returnSection.push_back((char)4);
+//  			//storeSizeOfReturnSection
+//  			m_context << u256(0x20);
+//  			utils().allocateMemory();
+//  			m_context << u256(returnSection.size()) << Instruction::SWAP1 << Instruction::MSTORE;
+// // 
+// // 			//storeReturnSection
+//  			m_context << u256(0x20);
+//  			utils().allocateMemory();
+//  			m_context << h256::Arith(h256(returnSection, h256::AlignLeft)) << Instruction::SWAP1 << Instruction::MSTORE;
+// 
+// 
+// 			m_context << Instruction::TEST1;
+// 			break;
+		}
+		case FunctionType::Kind::AddrPrefix:
+		{
+			TypePointers argumentTypes;
+			for (int i = arguments.size() - 1; i >= 0; i--) {
+				arguments[i]->accept(*this);
+				utils().convertType(*arguments[i]->annotation().type, *function.parameterTypes()[i], true);
+			}
+			
+// 			arguments[2]->accept(*this);
+// 			utils().convertType(*arguments[2]->annotation().type, *function.parameterTypes()[2], true);
+// 
+// 			arguments[1]->accept(*this);
+// 			utils().convertType(*arguments[1]->annotation().type, *function.parameterTypes()[1], true);
+// 
+// 			arguments[0]->accept(*this);
+// 			utils().convertType(*arguments[0]->annotation().type, *function.parameterTypes()[0], true);
+			m_context << Instruction::ADDRPREFIX;
+			break;
+		}
 		case FunctionType::Kind::Revert:
 		{
 			if (arguments.empty())
@@ -2378,9 +2647,9 @@ void ExpressionCompiler::appendCompareOperatorCode(Token _operator, Type const& 
 			solUnimplementedAssert(functionType->sizeOnStack() == 2, "");
 			m_context << Instruction::SWAP3;
 
-			m_context << ((u256(1) << 160) - 1) << Instruction::AND;
+			m_context << ((u256(1) << 192) - 1) << Instruction::AND;
 			m_context << Instruction::SWAP1;
-			m_context << ((u256(1) << 160) - 1) << Instruction::AND;
+			m_context << ((u256(1) << 192) - 1) << Instruction::AND;
 			m_context << Instruction::EQ;
 			m_context << Instruction::SWAP2;
 			m_context << ((u256(1) << 32) - 1) << Instruction::AND;
@@ -2860,8 +3129,8 @@ void ExpressionCompiler::appendExternalFunctionCall(
 	{
 		// fix: built-in contract returns right-aligned data
 		utils().fetchFreeMemoryPointer();
-		utils().loadFromMemoryDynamic(IntegerType(160), false, true, false);
-		utils().convertType(IntegerType(160), FixedBytesType(20));
+		utils().loadFromMemoryDynamic(IntegerType(192), false, true, false);
+		utils().convertType(IntegerType(192), FixedBytesType(24));
 	}
 	else if (funKind == FunctionType::Kind::ECRecover)
 	{

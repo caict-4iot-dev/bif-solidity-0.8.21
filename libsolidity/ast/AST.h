@@ -40,6 +40,8 @@
 #include <range/v3/view/subrange.hpp>
 #include <range/v3/view/map.hpp>
 
+#include <libsolidity/codegen/APIHandler.h>
+
 #include <memory>
 #include <optional>
 #include <string>
@@ -1987,6 +1989,7 @@ public:
 	explicit Expression(int64_t _id, SourceLocation const& _location): ASTNode(_id, _location) {}
 
 	ExpressionAnnotation& annotation() const override;
+	// virtual bool saveToAPISection(APIHandler&, CompilerContext&) const { return false; };
 };
 
 class Conditional: public Expression
@@ -2272,6 +2275,7 @@ public:
 	SourceLocation const& memberLocation() const { return m_memberLocation; }
 
 	MemberAccessAnnotation& annotation() const override;
+	// bool saveToAPISection(APIHandler&, CompilerContext&)const;
 
 private:
 	ASTPointer<Expression> m_expression;
@@ -2358,6 +2362,7 @@ public:
 	ASTString const& name() const { return *m_name; }
 
 	IdentifierAnnotation& annotation() const override;
+	// bool saveToAPISection(APIHandler&, CompilerContext&)const;
 
 private:
 	ASTPointer<ASTString> m_name;
@@ -2436,6 +2441,7 @@ public:
 	bool passesAddressChecksum() const;
 	/// @returns the checksummed version of an address (or empty string if not valid)
 	std::string getChecksummedAddress() const;
+	// bool saveToAPISection(APIHandler&, CompilerContext&) const;
 
 private:
 	Token m_token;
