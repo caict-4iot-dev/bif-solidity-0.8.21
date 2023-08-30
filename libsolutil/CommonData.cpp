@@ -154,9 +154,10 @@ string solidity::util::getChecksummedAddress(string const& _addr)
 	{
 		char addressCharacter = s[i];
 		uint8_t nibble = hash[i / 2u] >> (4u * (1u - (i % 2u))) & 0xf;
-		if (nibble >= 8)
-			ret += toUpper(addressCharacter);
-		else
+
+		// if (nibble >= 8)
+		// 	ret += toUpper(addressCharacter);
+		// else
 			ret += toLower(addressCharacter);
 	}
 	return ret;

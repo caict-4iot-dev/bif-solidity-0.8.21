@@ -40,6 +40,23 @@ number [to indicate this fast pace of change](https://semver.org/#spec-item-4).
 Instructions about how to build and install the Solidity compiler can be
 found in the [Solidity documentation](https://docs.soliditylang.org/en/latest/installing-solidity.html#building-from-source).
 
+1. Install boost
+
+   Download  https://boostorg.jfrog.io/artifactory/main/release/1.77.0/source/boost_1_77_0.zip
+
+   ```bash
+   $ ./bootstrap.sh
+   $ ./b2 -j4 -d0 link=static runtime-link=static variant=release threading=multi address-model=64 --with-filesystem --with-system --with-regex --with-program_options --with-test --prefix=/usr/local/boost install
+   ```
+
+2. Build solidity
+
+   ```bash
+   $ mkdir build
+   $ cd build
+   $ cmake -DPEDANTIC=OFF -DBoost_USE_STATIC_RUNTIME=ON -DBoost_DIR=/usr/local/boost/lib/cmake/Boost-1.77.0 ..
+   $ make -j4
+   ```
 
 ## Example
 
