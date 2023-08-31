@@ -151,9 +151,21 @@ void solidity::util::bidAddressReplace(std::string &_context)
 	{
 		if( (posStart=_context.find("did:bid", posEnd)) != string::npos )
 		{       
-			//²éÕÒµØÖ·µÄ½áÎ²±êÖ¾";"
 			posEnd = 0;
 			posEnd = _context.find(";", posStart);
+			std::string::size_type posEndTemp = 0;
+			if((posEndTemp = _context.find(")", posStart)) != std::string::npos){
+				if(posEndTemp < posEnd)
+					posEnd = posEndTemp;				
+			}
+			if((posEndTemp = _context.find("]", posStart)) != std::string::npos){
+				if(posEndTemp < posEnd)
+					posEnd = posEndTemp;				
+			}
+			if((posEndTemp = _context.find("\"", posStart)) != std::string::npos){
+				if(posEndTemp < posEnd)
+					posEnd = posEndTemp;				
+			}
 			std::string oldbidAddress, newbidAddress;
 			oldbidAddress.assign(_context, posStart, posEnd-posStart);
 			std::cout << "oldbidAddress:" << oldbidAddress << std::endl;
