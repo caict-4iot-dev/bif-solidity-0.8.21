@@ -62,7 +62,7 @@ std::string LinkerObject::toHex() const
 
 std::string LinkerObject::libraryPlaceholder(std::string const& _libraryName)
 {
-	return "$" + keccak256(_libraryName).hex().substr(0, 34) + "$";
+	return "$" + keccak256(_libraryName).hex().substr(0, 34 + 8) + "$";
 }
 
 h192 const*
