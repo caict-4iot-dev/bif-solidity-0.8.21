@@ -448,7 +448,7 @@ smtutil::Expression maxValue(frontend::Type const* _type)
 		dynamic_cast<AddressType const*>(_type) ||
 		dynamic_cast<ContractType const*>(_type)
 	)
-		return TypeProvider::uint(160)->maxValue();
+		return TypeProvider::uint(192)->maxValue();
 	if (auto const* enumType = dynamic_cast<EnumType const*>(_type))
 		return enumType->numberOfMembers() - 1;
 	if (auto const* bytesType = dynamic_cast<FixedBytesType const*>(_type))

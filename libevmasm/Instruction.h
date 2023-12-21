@@ -63,6 +63,9 @@ enum class Instruction: uint8_t
 
 	KECCAK256 = 0x20,		///< compute KECCAK-256 hash
 
+	ADDRPREFIX = 0x21,		///< add by zhangbo
+	TEST1 = 0x22,		///< add by zhangbo
+
 	ADDRESS = 0x30,		///< get address of currently executing account
 	BALANCE,			///< get balance of the given account
 	ORIGIN,				///< get execution origination address
@@ -176,6 +179,42 @@ enum class Instruction: uint8_t
 	LOG2,				///< Makes a log entry; 2 topics.
 	LOG3,				///< Makes a log entry; 3 topics.
 	LOG4,				///< Makes a log entry; 4 topics.
+
+	//add by zhangbo 
+	STOI64CHECK = 0xc0, 
+
+	SHA256NEW,
+	ECVERIFY,
+	TOADDRESS,
+	BCRANGEPROOFVERIFY,
+	PEDERSENTALLYVERIFY,
+
+	SENDER = 0xc6,
+	INITIATOR,
+	OPERATIONINDEX,
+	NOICE,
+	ASSET,
+
+	FEELIMIT = 0xcb,
+	ACCOUNTPRIVILEGE = 0xcc,
+	TRUST,
+	STATUS,
+	CONTROLLEDATTR,
+	SETACCOUNTTRUSTED = 0xd0,
+	SETACCOUNTSTATUS,
+	SETCONTROLLEDATTR,
+	ISSUEASSET,
+	PAYASSET,
+
+	SDEL = 0xd5,
+	ISVALIDATOR = 0xd6,
+	GETVALIDATORS,
+	QUORUMSIZE,
+	CONFIGFEE,
+	SETVALIDATORS = 0xda,
+
+	ADDRESSCHECK = 0xdb,
+	//end add 
 
 	CREATE = 0xf0,		///< create a new account with associated code
 	CALL,				///< message-call into an account
@@ -309,6 +348,9 @@ struct InstructionInfo
 
 /// Information on all the instructions.
 InstructionInfo instructionInfo(Instruction _inst, langutil::EVMVersion _evmVersion);
+
+//add by zhangbo
+int getInstructionArgsSize(Instruction _inst);
 
 /// check whether instructions exists.
 bool isValidInstruction(Instruction _inst);
