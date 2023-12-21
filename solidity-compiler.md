@@ -95,6 +95,6 @@ git apply ../patch/*.patch
 ```
 
 
-
-
+js编译器生成 一键部署
+sh script/build_emscripten.sh
 

@@ -877,7 +877,7 @@ bool ExpressionCompiler::visit(FunctionCall const& _functionCall)
 		}
 		case FunctionType::Kind::EcVerify:
 		{
-			for (int i = arguments.size() - 1; i >= 0; i--) {
+			for (size_t i = arguments.size() - 1; i >= 0; i--) {
 				arguments[i]->accept(*this);
 				//�������Ϊstring memory
 				if ((*function.parameterTypes()[i]).isImplicitlyConvertibleTo(*TypeProvider::fromElementaryTypeName("string memory")))
@@ -908,7 +908,7 @@ bool ExpressionCompiler::visit(FunctionCall const& _functionCall)
 		}
 		case FunctionType::Kind::BcRangeProofVerify:
 		{
-			for (int i = arguments.size() - 1; i >= 0; i--) {
+			for (size_t i = arguments.size() - 1; i >= 0; i--) {
 				arguments[i]->accept(*this);
 				//�������Ϊstring memory
 				utils().fetchFreeMemoryPointer();
@@ -923,7 +923,7 @@ bool ExpressionCompiler::visit(FunctionCall const& _functionCall)
 		}
 		case FunctionType::Kind::PedersenTallyVerify:
 		{
-			for (int i = arguments.size() - 1; i >= 0; i--) {
+			for (size_t i = arguments.size() - 1; i >= 0; i--) {
 				arguments[i]->accept(*this);
 				//�������Ϊstring memory
 				if ((*function.parameterTypes()[i]).isImplicitlyConvertibleTo(*TypeProvider::fromElementaryTypeName("string memory")))
@@ -1118,7 +1118,7 @@ bool ExpressionCompiler::visit(FunctionCall const& _functionCall)
 		case FunctionType::Kind::AddrPrefix:
 		{
 			TypePointers argumentTypes;
-			for (int i = arguments.size() - 1; i >= 0; i--) {
+			for (size_t i = arguments.size() - 1; i >= 0; i--) {
 				arguments[i]->accept(*this);
 				utils().convertType(*arguments[i]->annotation().type, *function.parameterTypes()[i], true);
 			}
@@ -1732,6 +1732,8 @@ bool ExpressionCompiler::visit(FunctionCall const& _functionCall)
 			break;
 		case FunctionType::Kind::MetaType:
 			// No code to generate.
+			break;
+		default:
 			break;
 		}
 	}
