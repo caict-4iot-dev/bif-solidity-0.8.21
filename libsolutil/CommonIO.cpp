@@ -72,11 +72,13 @@ std::string solidity::util::BinToHexString(const std::string &value) {
 	std::string result;
 	result.resize(value.size() * 2);
 	for (size_t i = 0; i < value.size(); i++) {
-		uint8_t item = value[i];
+		uint8_t item = static_cast<uint8_t>(value[i]);
 		uint8_t high = (item >> 4);
 		uint8_t low = (item & 0x0F);
-		result[2 * i] = (high <= 9) ? (high + '0') : (high - 10 + 'a');
-		result[2 * i + 1] = (low <= 9) ? (low + '0') : (low - 10 + 'a');
+		int highChar = (high <= 9) ? (high + '0') : (high - 10 + 'a');
+		result[2 * i] = static_cast<char>(highChar);
+		int highChar2 = (low <= 9) ? (low + '0') : (low - 10 + 'a');
+		result[2 * i + 1] = static_cast<char>(highChar2);
 	}
 	return result;
 }
@@ -91,9 +93,9 @@ int solidity::util::Base58Decode(const std::string &strIn, std::string &strout) 
 	int carry = 0;
 	for (size_t i = nZeros; i < strIn.size(); i++) {
 		carry = (int)solidity::util::kBase58digits[(int)strIn[i]];
-		for (int j = new_size - 1; j >= 0; j--) {
+		for (size_t j = new_size - 1; j >= 0; j--) {
 			int tmp = (unsigned char)tmp_str[j] * 58 + carry;
-			tmp_str[j] = (unsigned char)(tmp % 256);
+			tmp_str[j] = static_cast<char>(tmp % 256);
 			carry = tmp / 256;
 		}
 	}
@@ -104,7 +106,7 @@ int solidity::util::Base58Decode(const std::string &strIn, std::string &strout) 
 	for (; k < tmp_str.size() && tmp_str[k] == 0; k++);
 	for (; k < tmp_str.size(); k++)
 		strout.push_back(tmp_str[k]);
-	return nZeros + tmp_str.size() - k;
+	return static_cast<int>(nZeros + tmp_str.size() - k);
 }
 
 std::string solidity::util::fromBidAddress(std::string const &_a)

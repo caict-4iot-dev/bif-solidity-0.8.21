@@ -877,7 +877,7 @@ bool ExpressionCompiler::visit(FunctionCall const& _functionCall)
 		}
 		case FunctionType::Kind::EcVerify:
 		{
-			for (int i = arguments.size() - 1; i >= 0; i--) {
+			for (size_t i = arguments.size() - 1; i >= 0; i--) {
 				arguments[i]->accept(*this);
 				//�������Ϊstring memory
 				if ((*function.parameterTypes()[i]).isImplicitlyConvertibleTo(*TypeProvider::fromElementaryTypeName("string memory")))
@@ -908,7 +908,7 @@ bool ExpressionCompiler::visit(FunctionCall const& _functionCall)
 		}
 		case FunctionType::Kind::BcRangeProofVerify:
 		{
-			for (int i = arguments.size() - 1; i >= 0; i--) {
+			for (size_t i = arguments.size() - 1; i >= 0; i--) {
 				arguments[i]->accept(*this);
 				//�������Ϊstring memory
 				utils().fetchFreeMemoryPointer();
@@ -923,7 +923,7 @@ bool ExpressionCompiler::visit(FunctionCall const& _functionCall)
 		}
 		case FunctionType::Kind::PedersenTallyVerify:
 		{
-			for (int i = arguments.size() - 1; i >= 0; i--) {
+			for (size_t i = arguments.size() - 1; i >= 0; i--) {
 				arguments[i]->accept(*this);
 				//�������Ϊstring memory
 				if ((*function.parameterTypes()[i]).isImplicitlyConvertibleTo(*TypeProvider::fromElementaryTypeName("string memory")))
@@ -1070,65 +1070,65 @@ bool ExpressionCompiler::visit(FunctionCall const& _functionCall)
 //   			apiHandler.packedToMemory(Instruction::TEST1, Token::StringLiteral);
 //   			apiHandler.clearAPIObjects();
   			break;
-// 
+//
 // 			arguments[0]->accept(*this);
 //  			utils().convertType(*arguments[0]->annotation().type, *function.parameterTypes()[0], true);
-//  
-//  		
-//  
+//
+//
+//
 //  		//	utils().fetchFreeMemoryPointer();
-// 
+//
 // 			bytes typeSection;
 // 			typeSection.push_back('t');
 // 			typeSection.push_back('e');
 // 			typeSection.push_back('s');
 // 			typeSection.push_back('t');
 // 			typeSection.push_back('\0');
-// 
+//
 // 			m_context << u256(0x20);
 // 			utils().allocateMemory();
 // 			/// stack post: typeSectionOffset <mem_start>
 // 			/// stack pre: typeSectionOffset <mem_start> length
 // 			m_context << u256(typeSection.size()) << Instruction::SWAP1 << Instruction::MSTORE;
-// 
-// 
+//
+//
 // 			m_context << u256(0x20);
 // 			utils().allocateMemory();
 // 			/// stack post: typeSectionOffset <mem_start> typeSection
 // 			m_context << h256::Arith(h256(typeSection, h256::AlignLeft)) << Instruction::SWAP1 << Instruction::MSTORE;
-// 
-// 
-// 
+//
+//
+//
 // 			bytes returnSection;
 // 			returnSection.push_back((char)4);
 //  			//storeSizeOfReturnSection
 //  			m_context << u256(0x20);
 //  			utils().allocateMemory();
 //  			m_context << u256(returnSection.size()) << Instruction::SWAP1 << Instruction::MSTORE;
-// // 
+// //
 // // 			//storeReturnSection
 //  			m_context << u256(0x20);
 //  			utils().allocateMemory();
 //  			m_context << h256::Arith(h256(returnSection, h256::AlignLeft)) << Instruction::SWAP1 << Instruction::MSTORE;
-// 
-// 
+//
+//
 // 			m_context << Instruction::TEST1;
 // 			break;
 		}
 		case FunctionType::Kind::AddrPrefix:
 		{
 			TypePointers argumentTypes;
-			for (int i = arguments.size() - 1; i >= 0; i--) {
+			for (size_t i = arguments.size() - 1; i >= 0; i--) {
 				arguments[i]->accept(*this);
 				utils().convertType(*arguments[i]->annotation().type, *function.parameterTypes()[i], true);
 			}
-			
+
 // 			arguments[2]->accept(*this);
 // 			utils().convertType(*arguments[2]->annotation().type, *function.parameterTypes()[2], true);
-// 
+//
 // 			arguments[1]->accept(*this);
 // 			utils().convertType(*arguments[1]->annotation().type, *function.parameterTypes()[1], true);
-// 
+//
 // 			arguments[0]->accept(*this);
 // 			utils().convertType(*arguments[0]->annotation().type, *function.parameterTypes()[0], true);
 			m_context << Instruction::ADDRPREFIX;
@@ -1732,6 +1732,8 @@ bool ExpressionCompiler::visit(FunctionCall const& _functionCall)
 			break;
 		case FunctionType::Kind::MetaType:
 			// No code to generate.
+			break;
+		default:
 			break;
 		}
 	}
