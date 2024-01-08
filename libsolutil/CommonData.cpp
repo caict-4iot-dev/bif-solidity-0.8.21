@@ -147,17 +147,17 @@ string solidity::util::getChecksummedAddress(string const& _addr)
 	assertThrow(s.length() == 48, InvalidAddress, "");
 	assertThrow(s.find_first_not_of("0123456789abcdefABCDEF") == string::npos, InvalidAddress, "");
 
-	//h256 hash = keccak256(boost::algorithm::to_lower_copy(s, std::locale::classic()));
+	h256 hash = keccak256(boost::algorithm::to_lower_copy(s, std::locale::classic()));
 
 	string ret = "0x";
 	for (unsigned i = 0; i < 48; ++i)
 	{
 		char addressCharacter = s[i];
-		//uint8_t nibble = hash[i / 2u] >> (4u * (1u - (i % 2u))) & 0xf;
+		uint8_t nibble = hash[i / 2u] >> (4u * (1u - (i % 2u))) & 0xf;
 
-		// if (nibble >= 8)
-		// 	ret += toUpper(addressCharacter);
-		// else
+		if (nibble >= (8+4))
+		    ret += toUpper(addressCharacter);
+		else
 			ret += toLower(addressCharacter);
 	}
 	return ret;

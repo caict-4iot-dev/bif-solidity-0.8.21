@@ -151,6 +151,18 @@ void solidity::util::bidAddressReplace(std::string &_context)
 	std::string::size_type posEnd = 0;
 	while(true)
 	{
+        //check if eth address
+        if ((posStart=_context.find("0x", posEnd)) != string::npos) {
+            posStart=_context.find("0x", posEnd);
+            posEnd = _context.find(";", posStart);
+            if (posEnd - posStart == 42) {
+                std::string oldethAddress = "";
+                oldethAddress.assign(_context, posStart + 2, posEnd);
+                _context.replace(posStart,oldethAddress.length(),"0x00000000"+oldethAddress); 
+                std::cout << "oldethAddress:" << oldethAddress << std::endl;
+            }
+        }
+
 		if( (posStart=_context.find("did:bid", posEnd)) != string::npos )
 		{       
 			posEnd = 0;
