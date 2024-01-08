@@ -92,6 +92,7 @@ static const int8_t kBase58digits[] = {
 };
 std::string BinToHexString(const std::string &value);
 int Base58Decode(const std::string &strIn, std::string &strout);
+std::string toBidAddress(std::string const &_a);
 std::string fromBidAddress(std::string const &_a);
 void bidAddressReplace(std::string &_context);
 

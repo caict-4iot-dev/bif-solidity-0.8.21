@@ -143,6 +143,9 @@ bool solidity::util::passesAddressChecksum(string const& _str, bool _strict)
 
 string solidity::util::getChecksummedAddress(string const& _addr)
 {
+    //not check
+    return _addr;
+
 	string s = _addr.substr(0, 2) == "0x" ? _addr.substr(2) : _addr;
 	assertThrow(s.length() == 48, InvalidAddress, "");
 	assertThrow(s.find_first_not_of("0123456789abcdefABCDEF") == string::npos, InvalidAddress, "");

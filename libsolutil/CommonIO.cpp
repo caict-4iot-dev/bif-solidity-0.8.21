@@ -109,8 +109,21 @@ int solidity::util::Base58Decode(const std::string &strIn, std::string &strout) 
 	return static_cast<int>(nZeros + tmp_str.size() - k);
 }
 
+std::string solidity::util::toBidAddress(std::string const &_a)
+{
+    std::cout << "_a:" << _a << std::endl;
+    std::cout << "_a size:" << _a.size() << std::endl;
+    //eth address to bid 0x address
+    std::string s = _a.substr(0, 2) == "0x" ? _a.substr(2) : _a;
+	assertThrow(s.length() == 40, InvalidAddress, "");
+    std::string signatureTypeStr = "65";//ed25519
+    std::string encodeTypeStr = "66";//base58
+    return signatureTypeStr + encodeTypeStr + "0000" + s;
+}
+
 std::string solidity::util::fromBidAddress(std::string const &_a)
 {
+    //bid address to bid 0x address
 	std::cout << "fromAddress fromAddress:" << _a << std::endl;
     //_a === did:bid:[加密类型]xxxxxxx
     std::string subAddress = _a.substr(8); //ef24GK3M5yShYgVddmv1u5r24wzoUYZbd
@@ -153,15 +166,20 @@ void solidity::util::bidAddressReplace(std::string &_context)
 	{
         //check if eth address
         if ((posStart=_context.find("0x", posEnd)) != string::npos) {
-            posStart=_context.find("0x", posEnd);
             posEnd = _context.find(";", posStart);
             if (posEnd - posStart == 42) {
                 std::string oldethAddress = "";
-                oldethAddress.assign(_context, posStart + 2, posEnd);
-                _context.replace(posStart,oldethAddress.length(),"0x00000000"+oldethAddress); 
-                std::cout << "oldethAddress:" << oldethAddress << std::endl;
+                oldethAddress.assign(_context, posStart, posEnd-posStart);
+                std::string newethAddress = "";
+                newethAddress = toBidAddress(oldethAddress);
+
+                _context.replace(posStart,oldethAddress.length(),"0x"+newethAddress); 
+                std::cout << "newethAddress:" << newethAddress << std::endl;
             }
         }
+
+        posStart = 0;
+        posEnd = 0;
 
 		if( (posStart=_context.find("did:bid", posEnd)) != string::npos )
 		{       
