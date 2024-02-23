@@ -84,6 +84,7 @@ std::string solidity::util::BinToHexString(const std::string &value) {
 }
 
 int solidity::util::Base58Decode(const std::string &strIn, std::string &strout) {
+    std::cout << "base58Decode:" << strIn << std::endl;
 	const char* kBase58Dictionary = "123456789AbCDEFGHJKLMNPQRSTuVWXYZaBcdefghijkmnopqrstUvwxyz";
 	std::size_t nZeros = 0;
 	for (; nZeros < strIn.size() && strIn.at(nZeros) == kBase58Dictionary[0]; nZeros++);
@@ -93,7 +94,7 @@ int solidity::util::Base58Decode(const std::string &strIn, std::string &strout) 
 	int carry = 0;
 	for (size_t i = nZeros; i < strIn.size(); i++) {
 		carry = (int)solidity::util::kBase58digits[(int)strIn[i]];
-		for (size_t j = new_size - 1; j >= 0; j--) {
+		for (int j = new_size - 1; j >= 0; j--) {
 			int tmp = (unsigned char)tmp_str[j] * 58 + carry;
 			tmp_str[j] = static_cast<char>(tmp % 256);
 			carry = tmp / 256;
@@ -123,36 +124,11 @@ std::string solidity::util::toBidAddress(std::string const &_a)
 
 std::string solidity::util::fromBidAddress(std::string const &_a)
 {
-    //bid address to bid 0x address
 	std::cout << "fromAddress fromAddress:" << _a << std::endl;
-    //_a === did:bid:[加密类型]xxxxxxx
-    std::string subAddress = _a.substr(8); //ef24GK3M5yShYgVddmv1u5r24wzoUYZbd
-    std::string signatureType = subAddress.substr(0, 1);
-    std::string encodeType = subAddress.substr(1, 1);
     std::string decodeAddress = "";
-
-    std::cout << "fromAddress signatureType:" << signatureType << std::endl;
-    std::cout << "fromAddress encodeType:" << encodeType << std::endl;
-
-    std::string signatureTypeStr = "";
-    if(signatureType.compare("z") == 0)//SIGNTYPE_CFCASM2
-            signatureTypeStr = "7A";
-    else//SIGNTYPE_ED25519
-            signatureTypeStr = "65";
-
-    std::string encodeTypeStr = "";
-    if(encodeType.compare("s") == 0){//ENCODETYPE_BASE64
-            //待填充逻辑
-            encodeTypeStr = "73";
-    }
-    else if(encodeType.compare("t") == 0){//ENCODETYPE_BECH32
-            //待填充逻辑
-            encodeTypeStr = "74";
-    }
-    else{//ENCODETYPE_BASE58
-            Base58Decode(subAddress.substr(2), decodeAddress);
-            encodeTypeStr = "66";
-    }
+    std::string signatureTypeStr = "65";
+    std::string encodeTypeStr = "66";
+    Base58Decode(_a.substr(10), decodeAddress);
     std::cout << "fromAddress decodeAddress:" << signatureTypeStr + encodeTypeStr + BinToHexString(decodeAddress) << std::endl;
 
     return signatureTypeStr + encodeTypeStr + BinToHexString(decodeAddress);
@@ -162,11 +138,14 @@ void solidity::util::bidAddressReplace(std::string &_context)
 {
 	std::string::size_type posStart = 0;
 	std::string::size_type posEnd = 0;
-	while(true)
-	{
-        //check if eth address
+
+    std::string separators = ",;]";
+
+    posStart = 0;
+    posEnd = 0;
+    while(true) {
         if ((posStart=_context.find("0x", posEnd)) != string::npos) {
-            posEnd = _context.find(";", posStart);
+            posEnd = _context.find_first_of(separators, posStart);
             if (posEnd - posStart == 42) {
                 std::string oldethAddress = "";
                 oldethAddress.assign(_context, posStart, posEnd-posStart);
@@ -177,33 +156,27 @@ void solidity::util::bidAddressReplace(std::string &_context)
                 std::cout << "newethAddress:" << newethAddress << std::endl;
             }
         }
+        else
+		{
+			break;
+		}
+    }
 
+	while(true)
+	{
         posStart = 0;
         posEnd = 0;
 
 		if( (posStart=_context.find("did:bid", posEnd)) != string::npos )
 		{       
-			posEnd = 0;
-			posEnd = _context.find(";", posStart);
-			std::string::size_type posEndTemp = 0;
-			if((posEndTemp = _context.find(")", posStart)) != std::string::npos){
-				if(posEndTemp < posEnd)
-					posEnd = posEndTemp;				
-			}
-			if((posEndTemp = _context.find("]", posStart)) != std::string::npos){
-				if(posEndTemp < posEnd)
-					posEnd = posEndTemp;				
-			}
-			if((posEndTemp = _context.find("\"", posStart)) != std::string::npos){
-				if(posEndTemp < posEnd)
-					posEnd = posEndTemp;				
-			}
+			posEnd = _context.find_first_of(separators, posStart);
+
 			std::string oldbidAddress, newbidAddress;
 			oldbidAddress.assign(_context, posStart, posEnd-posStart);
 			std::cout << "oldbidAddress:" << oldbidAddress << std::endl;
 			newbidAddress = fromBidAddress(oldbidAddress);
 			std::cout << "newbidAddress:" << newbidAddress << std::endl;
-			_context.replace(posStart,oldbidAddress.length(),"0x"+newbidAddress); 
+			_context.replace(posStart, oldbidAddress.length(),"0x" + newbidAddress); 
 		}
 		else
 		{
