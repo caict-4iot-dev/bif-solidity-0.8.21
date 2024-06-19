@@ -94,9 +94,9 @@ int solidity::util::Base58Decode(const std::string &strIn, std::string &strout) 
 	int carry = 0;
 	for (size_t i = nZeros; i < strIn.size(); i++) {
 		carry = (int)solidity::util::kBase58digits[(int)strIn[i]];
-		for (int j = new_size - 1; j >= 0; j--) {
-			int tmp = (unsigned char)tmp_str[j] * 58 + carry;
-			tmp_str[j] = static_cast<char>(tmp % 256);
+		for (int j = (int)new_size - 1; j >= 0; j--) {
+			int tmp = (unsigned char)tmp_str[(std::size_t)j] * 58 + carry;
+			tmp_str[(std::size_t)j] = static_cast<char>(tmp % 256);
 			carry = tmp / 256;
 		}
 	}
